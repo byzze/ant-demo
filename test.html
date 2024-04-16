@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker with Tailwind CSS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles for color picker */
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .color-box {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200 p-4">
+    <div id="colorPicker" class="color-picker">
+        <!-- Color boxes -->
+        <div class="color-box bg-red-500"></div>
+        <div class="color-box bg-blue-500"></div>
+        <div class="color-box bg-green-500"></div>
+        <div class="color-box bg-yellow-500"></div>
+        <div class="color-box bg-purple-500"></div>
+        <div class="color-box bg-pink-500"></div>
+    </div>
+
+    <div id="selectedColor" class="mt-4">
+        Selected Color: <span id="colorValue">#ffffff</span>
+    </div>
+
+    <script>
+        // JavaScript for color picker interaction
+        const colorPicker = document.getElementById('colorPicker');
+        const selectedColor = document.getElementById('colorValue');
+
+        colorPicker.addEventListener('click', (event) => {
+            if (event.target.classList.contains('color-box')) {
+                const color = event.target.style.backgroundColor;
+                selectedColor.textContent = color;
+                selectedColor.style.color = color;
+            }
+        });
+    </script>
+</body>
+
+</html>
