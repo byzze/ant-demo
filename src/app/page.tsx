@@ -11,7 +11,6 @@ import { DownOutlined, LaptopOutlined, NotificationOutlined, BellOutlined, Quest
 import type { GlobalToken } from 'antd'
 import ThemeSetting from '@/components/ThemeSetting';
 
-
 const menuChildren = {
   "Design": [{ key: "Design Values", label: `Design Values` }, { key: "Global Styles", label: `Global Styles` },
   { key: "Themes", label: `Themes` }, { key: "Design Patterns", label: `Design Patterns` }
@@ -57,67 +56,89 @@ const breadcrumbItems = [
   },
 ]
 
-
 export default function Home({ Component, pageProps }: AppProps) {
+  const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme;
+  const config: ThemeConfig = {
+    algorithm: [darkAlgorithm, defaultAlgorithm, compactAlgorithm],
+    token: {
+      colorPrimary: '#FFC416',
+    },
+    components: {
+      Layout: {
+        /* 这里是你的组件 token */
+        headerBg: '#F4F7FC',
+        siderBg: '#F4F7FC',
+        bodyBg: '#F4F7FC',
+        footerBg: '#F4F7FC',
+      },
+      Menu: {
+        itemBg: '#F4F7FC',
+        subMenuItemBg: '#F4F7FC',
+      }
+    },
+  }
+
   const [current, setCurrent] = useState('1');
+  const [primary, setPrimary] = useState(config);
+  function handleClick(config: ThemeConfig) {
+    console.log(config)
+    setPrimary(config);
+  }
+
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
   };
   return (
-    <ConfigProvider>
-      <Layout style={{ minHeight: '80vh' }}>
-        <Header style={{ display: 'flex', alignItems: 'center', backgroundColor: '#F4F7FC' }}>
-          <Space style={{ flex: 1, minWidth: 0 }}>
-            <Image width={45} src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
-            <span>Ant Design 5.0</span>
-          </Space>
-          <Space>
-            <BellOutlined />
-            <QuestionCircleOutlined />
-            <Avatar icon={<UserOutlined />} />
-          </Space>
+    <ConfigProvider
+      theme={primary}
+    >
+      <Layout style={{
+        borderRadius: 8,
+        overflow: 'hidden',
+      }}>
+        <Header>
+          <Row>
+            <Col span={12}>
+              <Space>
+                <Image width={45} src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+                <span>Ant Design 5.0</span>
+              </Space>
+            </Col>
+            <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Space>
+                <BellOutlined />
+                <QuestionCircleOutlined />
+                <Avatar icon={<UserOutlined />} />
+              </Space>
+            </Col>
+          </Row>
         </Header>
-
-        <Content>
-          <Divider />
-          <Layout>
-            <Sider>
-              <Menu
-                onClick={onClick}
-                selectedKeys={[current]}
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['Design', 'Themes']}
-                style={{ height: '100%', borderRight: 0 }}
-                items={items2}
-              />
-            </Sider>
-            <Content>
-              <Breadcrumb items={breadcrumbItems} /><h1>定制主题</h1>
-              <ThemeSetting />
-            </Content>
-          </Layout>
-        </Content>
-
-        {/* <ThemeSetting /> */}
-        {/* <Layout>
-            <Sider>
-              <Menu
-                onClick={onClick}
-                selectedKeys={[current]}
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['Design', 'Themes']}
-                style={{ height: '100%', borderRight: 0 }}
-                items={items2}
-              />
-            </Sider>
+        <Layout>
+          <Sider>
+            <Menu
+              onClick={onClick}
+              selectedKeys={[current]}
+              mode="inline"
+              defaultSelectedKeys={['1']}
+              defaultOpenKeys={['Design', 'Themes']}
+              style={{ borderRight: 0 }}
+              items={items2}
+            />
+          </Sider>
+          <Content>
             <Layout>
-              <Breadcrumb items={breadcrumbItems} /><h1>定制主题</h1>
-              <ThemeSetting />
+              <Header>
+                <Breadcrumb items={breadcrumbItems} />
+              </Header>
+              <span style={{ background: '#F4F7FC', fontSize: 30, marginLeft: 40, marginBottom: 20, marginTop: -20 }}>定制主题</span>
+
+              <ThemeSetting config={config} handleClick={handleClick} />
+
             </Layout>
-          </Layout> */}
+          </Content>
+        </Layout>
+        {/* <Footer>Footer</Footer> */}
       </Layout >
     </ConfigProvider >
   );
