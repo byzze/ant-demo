@@ -1,8 +1,9 @@
 
-import { Breadcrumb, Button, Card, Col, ColorPicker, ConfigProvider, Divider, Form, InputNumber, Layout, Radio, RadioChangeEvent, Row, Slider, Space, ThemeConfig, theme, Image } from 'antd'; // 假设你使用的是Ant Design的Radio组件  
+import { Breadcrumb, Button, Card, Col, ColorPicker, ConfigProvider, Divider, Form, InputNumber, Layout, Radio, RadioChangeEvent, Row, Slider, Space, ThemeConfig, theme, Image, Input } from 'antd'; // 假设你使用的是Ant Design的Radio组件  
 import { Content, Header } from 'antd/es/layout/layout';
-import { Dispatch, Fragment, SetStateAction, useState } from 'react';
-
+import { Component, Dispatch, Fragment, SetStateAction, useState } from 'react';
+import { SketchPicker, CirclePicker, TwitterPicker } from 'react-color';
+import { CheckOutlined } from "@ant-design/icons";
 
 interface MyComponentProps {
     handleClick: (config: ThemeConfig) => void;
@@ -52,26 +53,8 @@ export default function ThemeSetting(props: MyComponentProps) {
     ]
 
     const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme;
-    const [form] = Form.useForm<{ name: string; spaceType: string }>();
+    const [form] = Form.useForm<{ name: string; spaceType: string, mainColor: string }>();
 
-    const subconfig: ThemeConfig = {
-        token: {
-            colorPrimary: '#FFC416',
-        },
-        components: {
-            Layout: {
-                /* 这里是你的组件 token */
-                headerBg: '#FFFFFF',
-                // siderBg: '#9a7d56',
-                bodyBg: '#FFFFFF',
-            },
-            Card: {
-                actionsBg: '#FFC416',
-            },
-            Radio: {
-            }
-        },
-    }
     // const { token } = theme.useToken();
 
     const [cValue, setCValue] = useState("default");
@@ -91,12 +74,33 @@ export default function ThemeSetting(props: MyComponentProps) {
     };
 
     const [yuanValue, setYuanValue] = useState(16);
-    const [primary, setPrimary] = useState(subconfig);
+    const [colorValue, setColorValue] = useState('#039e74');
     const initdata = {
         name: 'test',
         spaceType: cValue,
-
+        mainColor: colorValue,
     }
+
+
+    const subconfig: ThemeConfig = {
+        token: {
+            colorPrimary: colorValue,
+        },
+        components: {
+            Layout: {
+                /* 这里是你的组件 token */
+                headerBg: '#FFFFFF',
+                // siderBg: '#9a7d56',
+                bodyBg: '#FFFFFF',
+            },
+            // Card: {
+            //     actionsBg: '#FFC416',
+            // },
+            Radio: {
+            }
+        },
+    }
+    const [primary, setPrimary] = useState(subconfig);
 
     form.setFieldsValue(initdata);
     return (
@@ -111,7 +115,6 @@ export default function ThemeSetting(props: MyComponentProps) {
                 marginBottom: 20,
             }}>
                 <Header>
-
                     <Row>
                         <Col span={12}>
                             <span style={{ fontSize: 20 }}>我的主题</span>
@@ -147,7 +150,6 @@ export default function ThemeSetting(props: MyComponentProps) {
                                             }
                                             copiedObject.algorithm = [darkAlgorithm];
                                             setPrimary(copiedObject);
-                                            console.log(e)
                                             return
                                         }}
                                         cover={<img alt="theme icon" src={data.icon} />}
@@ -176,23 +178,53 @@ export default function ThemeSetting(props: MyComponentProps) {
                                 </Col>
                             </Row>
                         </Form.Item>
-                        <Form.Item label="主色" name="borderRadius">
-                            <ConfigProvider theme={{
-                                token: {
-                                    motion: false,
-                                    borderRadius: 60
-                                },
-                            }}>
-                                <Radio.Group>
+                        <Form.Item label="主色" name="mainColor">
+                            <Space>
+                                <Input value={colorValue} style={{ width: 100 }} />
+                                <Radio.Group value={colorValue} onChange={(e) => {
+                                    setColorValue(e.target.value);
+                                    var obj = {
+                                        token: {
+                                            colorPrimary: e.target.value
+                                        },
+                                        components: {
+                                            Layout: {
+                                                /* 这里是你的组件 token */
+                                                headerBg: '#FFFFFF',
+                                                // siderBg: '#9a7d56',
+                                                bodyBg: '#FFFFFF',
+                                            },
+
+                                            Radio: {
+                                            }
+                                        },
+                                    };
+                                    setPrimary(obj);
+                                }}>
                                     <Space>
-                                        {myColor.map((data, index) => (
-                                            <Fragment key={data.key}>
-                                                <Radio.Button value={index} style={{ backgroundColor: data.color }} />
+                                        {myColor.map((data, index) => {
+                                            return <Fragment key={data.key}>
+                                                <ConfigProvider theme={{
+                                                    token: {
+                                                        motion: false,
+                                                    },
+                                                    components: {
+                                                        Radio: {
+                                                            colorPrimary: data.color,
+                                                            dotSize: 20,
+                                                            radioSize: 30,
+                                                            lineWidth: 15,
+                                                            colorBorder: data.color,
+                                                        },
+                                                    }
+                                                }}>
+                                                    <Radio key={data.key} value={data.color} />
+                                                </ConfigProvider>
                                             </Fragment>
-                                        ))}
+                                        })}
                                     </Space>
                                 </Radio.Group>
-                            </ConfigProvider>
+                            </Space>
                         </Form.Item>
                         <Form.Item label="宽松度" name="spaceType">
                             <Radio.Group onChange={onChange} value={cValue}>

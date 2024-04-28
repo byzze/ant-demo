@@ -1,67 +1,24 @@
 'use client'
 
-import { useState, createElement } from 'react';
-import { ConfigProvider, Space, Button, Input, Divider, ColorPicker, Row, Col, Tag, Slider } from 'antd';
+import { useState, createElement, SetStateAction, } from 'react';
+import { ConfigProvider, Space, Button, Input, Divider, ColorPicker, Row, Col, Tag, Slider, Switch } from 'antd';
 import type { AppProps } from 'next/app';
 import type { MenuProps, RadioChangeEvent, ThemeConfig } from 'antd';
 import { Breadcrumb, Layout, Menu, theme, Avatar, Image, message, Dropdown, Card, Radio, InputNumber, Form } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { DownOutlined, LaptopOutlined, NotificationOutlined, BellOutlined, QuestionCircleOutlined, FolderOutlined, HomeOutlined } from '@ant-design/icons';
-import type { GlobalToken } from 'antd'
-import ThemeSetting from '@/components/ThemeSetting';
+import { DownOutlined, UserOutlined, NotificationOutlined, BellOutlined, QuestionCircleOutlined, FolderOutlined, HomeOutlined } from '@ant-design/icons';
+import Example2 from '@/components/Example2';
+import Example from '@/components/Example';
+import SelectMenu from '@/components/Menu/Menu';
+import { MenuData } from '@/components/Menu/Menu'
 
-const menuChildren = {
-  "Design": [{ key: "Design Values", label: `Design Values` }, { key: "Global Styles", label: `Global Styles` },
-  { key: "Themes", label: `Themes` }, { key: "Design Patterns", label: `Design Patterns` }
-  ]
-}
-
-const items2: MenuProps['items'] = [{
-  key: 'Design',
-  icon: createElement(FolderOutlined),
-  label: 'Design',
-  children: menuChildren['Design']
-}, {
-  key: 'Devlopment',
-  icon: createElement(FolderOutlined),
-  label: 'Devlopment',
-  children: []
-}]
-
-export type ThemeMode = 'lightDefault' | 'darkDefault' | 'lark'
-
-export interface ThemeSetting {
-  themeMode: ThemeMode
-  colorPrimary: GlobalToken['colorPrimary']
-  borderRadius: GlobalToken['borderRadius']
-  spaceType: 'default' | 'compact'
-}
-
-const menuItems = menuChildren["Design"];
-
-const breadcrumbItems = [
-  {
-    title:
-      <>
-        <HomeOutlined />
-      </>,
-  },
-  {
-    title: <a href="">Design</a>,
-    menu: { items: menuItems },
-  },
-  {
-    title: 'Themes',
-  },
-]
 
 export default function Home({ Component, pageProps }: AppProps) {
   const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme;
   const config: ThemeConfig = {
-    algorithm: [darkAlgorithm, defaultAlgorithm, compactAlgorithm],
+    // algorithm: [darkAlgorithm, defaultAlgorithm, compactAlgorithm],
     token: {
-      colorPrimary: '#FFC416',
+      // colorPrimary: '#FFC416',
     },
     components: {
       Layout: {
@@ -77,18 +34,18 @@ export default function Home({ Component, pageProps }: AppProps) {
       }
     },
   }
-
+  // const navigate = useNavigate();
   const [current, setCurrent] = useState('1');
   const [primary, setPrimary] = useState(config);
-  function handleClick(config: ThemeConfig) {
-    console.log(config)
-    setPrimary(config);
-  }
 
-  const onClick: MenuProps['onClick'] = (e) => {
+  const handleMenuClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
+    setSelectedMenuItem(e.key);
   };
+
+  const [selectedMenuItem, setSelectedMenuItem] = useState('APIManagement');
+
   return (
     <ConfigProvider
       theme={primary}
@@ -117,25 +74,18 @@ export default function Home({ Component, pageProps }: AppProps) {
         <Layout>
           <Sider>
             <Menu
-              onClick={onClick}
+              onClick={handleMenuClick}
               selectedKeys={[current]}
               mode="inline"
+              theme="light"
               defaultSelectedKeys={['1']}
-              defaultOpenKeys={['Design', 'Themes']}
+              defaultOpenKeys={['APIManagement', 'Themes']}
               style={{ borderRight: 0 }}
-              items={items2}
+              items={MenuData}
             />
           </Sider>
           <Content>
-            <Layout>
-              <Header>
-                <Breadcrumb items={breadcrumbItems} />
-              </Header>
-              <span style={{ background: '#F4F7FC', fontSize: 30, marginLeft: 40, marginBottom: 20, marginTop: -20 }}>定制主题</span>
-
-              <ThemeSetting config={config} handleClick={handleClick} />
-
-            </Layout>
+            <SelectMenu config={config} menuKey={selectedMenuItem} />
           </Content>
         </Layout>
         {/* <Footer>Footer</Footer> */}
